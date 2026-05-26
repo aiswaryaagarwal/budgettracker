@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Budget Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;  
+            -webkit-text-fill-color: transparent;
+            color: transparent; 
+            margin-bottom: 30px;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #1e3a5f, #1e1b4b);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 24px;
+            border: 1px solid #334155;
+        }
+
+        .balance-card p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .balance-card h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #38bdf8;
+        }
+
+        .form-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #334155;
+        }
+
+        .form-card h3 {
+            margin-bottom: 16px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            color: #e2e8f0;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+
+        select option { background: #1e293b; }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.85; }
+
+        .btn-credit { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
+        .btn-debit { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+
+        .transactions-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        .transactions-card h3 {
+            margin-bottom: 16px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            background: #0f172a;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #1e293b;
+            
+        }
+
+        .transaction-left { display: flex; flex-direction: column; gap: 4px; }
+        .transaction-desc { font-weight: 600; font-size: 0.95rem; }
+        .transaction-date { font-size: 0.75rem; color: #64748b; }
+
+        .transaction-amount {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .credit-amount { color: #22c55e; }
+        .debit-amount { color: #ef4444; }
+
+        .empty { text-align: center; color: #64748b; padding: 20px; }
+        .edit-btn {
+            background: #334155;
+            color: #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>💰 Budget Tracker</h1>
+
+    <!-- Balance -->
+    <div class="balance-card">
+        <p>Current Balance</p>
+        <h2>Rs.{{ balance }}</h2>
+    </div>
+
+    <!-- Add Transaction -->
+    <div class="form-card">
+        <h3>Add Transaction</h3>
+        <form action="/add" method="POST">
+            <input type="number" name="amount" placeholder="Amount (Rs.)" required step="0.01" min="0">
+            <input type="text" name="description" placeholder="Description (e.g. Salary, Groceries)" required>
+            <input type="hidden" name="type" id="typeField" value="Credit">
+            <div class="btn-row">
+                <button type="submit" class="btn-credit" onclick="document.getElementById('typeField').value='Credit'">+ Credit</button>
+                <button type="submit" class="btn-debit" onclick="document.getElementById('typeField').value='Debit'">- Debit</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Transactions List -->
+    <div class="transactions-card">
+        <h3>Transactions</h3>
+        {% if transactions %}
+            {% for t in transactions|reverse %}
+                <div class="transaction-item">
+                    <div class="transaction-left">
+                        <span class="transaction-desc">{{ t.description }}</span>
+                        <span class="transaction-date">{{ t.date }} · {{ t.type }}</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span class="transaction-amount {% if t.type == 'Credit' %}credit-amount{% else %}debit-amount{% endif %}">
+                            {% if t.type == 'Credit' %}+{% else %}-{% endif %}Rs.{{ "%.2f"|format(t.amount) }}
+                        </span>
+                        <a href="/edit/{{ loop.revindex0 }}" class="edit-btn">Edit</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty">No transactions yet. Add one above!</p>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>

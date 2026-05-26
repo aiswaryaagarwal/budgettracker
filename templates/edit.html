@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Transaction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            color: #e2e8f0;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            font-family: 'Inter', sans-serif;
+        }
+        input:focus, select:focus { outline: none; border-color: #38bdf8; }
+        select option { background: #1e293b; }
+        .btn-row { display: flex; gap: 12px; }
+        button, .back-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        button:hover, .back-btn:hover { opacity: 0.85; }
+        .btn-save { background: linear-gradient(135deg, #38bdf8, #818cf8); color: white; }
+        .back-btn { background: #334155; color: #e2e8f0; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>✏️ Edit Transaction</h1>
+    <div class="card">
+        <form action="/update/{{ index }}" method="POST">
+            <input type="number" name="amount" value="{{ transaction.amount }}" required step="0.01" min="0">
+            <input type="text" name="description" value="{{ transaction.description }}" required>
+            <select name="type">
+                <option value="Credit" {% if transaction.type == 'Credit' %}selected{% endif %}>Credit</option>
+                <option value="Debit" {% if transaction.type == 'Debit' %}selected{% endif %}>Debit</option>
+            </select>
+            <div class="btn-row">
+                <a href="/" class="back-btn">← Cancel</a>
+                <button type="submit" class="btn-save">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
