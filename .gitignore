@@ -1,0 +1,5 @@
+.DS_Store
+transactions.json
+*.xcodeproj/
+__pycache__/
+*.pyc
