@@ -17,6 +17,6 @@ A personal budget tracking web app built with Python and Flask.
 - JSON for data storage
 
 ## How to Run
-1. Install Flask: `pip3 install flask`
+1. Install Requirements: `pip3 requirements.txt`
 2. Run the app: `python3 budgettrackerapp.py`
 3. Open browser: `http://localhost:5000`
